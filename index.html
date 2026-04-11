@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Erased Histories | Sac State Department of History</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00563F;
+    --green-dark: #002B20;
+    --gold: #C4A052;
+    --gold-light: #dfc07a;
+    --cream: #FAF6EE;
+    --cream-dark: #f0ead8;
+    --ink: #1a1a18;
+    --muted: #5a6b62;
+    --border: rgba(0,86,63,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  nav {
+    background: var(--green-dark);
+    padding: 0 2rem;
+    display: flex;
+    align-items: stretch;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--gold);
+    overflow-x: auto;
+  }
+
+  .nav-brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 1rem 1.5rem 1rem 0;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid rgba(196,160,82,0.25);
+    margin-right: 0.5rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .nav-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 1rem;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .nav-link:hover, .nav-link.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .hero {
+    background: var(--green-dark);
+    color: var(--cream);
+    padding: 5rem 2rem 4.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(196,160,82,0.04) 39px, rgba(196,160,82,0.04) 40px);
+    pointer-events: none;
+  }
+
+  .hero-inner { max-width: 900px; margin: 0 auto; position: relative; }
+
+  .hero-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.75rem;
+    color: var(--cream);
+  }
+
+  .hero h1 em { font-style: italic; font-weight: 400; color: var(--gold-light); }
+
+  .hero-desc {
+    font-size: 1.05rem;
+    font-weight: 300;
+    line-height: 1.85;
+    max-width: 600px;
+    color: rgba(250,246,238,0.8);
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-credits {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(196,160,82,0.5);
+    line-height: 2;
+  }
+
+  .exhibit-wrap {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 60px;
+  }
+
+  .exhibit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .exhibit-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: var(--green-dark);
+    line-height: 1.15;
+  }
+
+  .count-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 2.5rem;
+    align-items: center;
+  }
+
+  .filter-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 0.25rem;
+  }
+
+  .filter-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 100px;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover { border-color: var(--green); color: var(--green); }
+  .filter-btn.active { background: var(--green); color: var(--cream); border-color: var(--green); }
+
+  .entries-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .entry-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .entry-card:hover {
+    border-color: rgba(196,160,82,0.5);
+    box-shadow: 0 4px 20px rgba(0,43,32,0.07);
+  }
+
+  .entry-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+
+  .entry-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.18rem 0.5rem;
+    border-radius: 100px;
+    background: var(--cream-dark);
+    color: var(--green);
+  }
+
+  .entry-tag.student { background: rgba(196,160,82,0.12); color: #8a6b28; }
+
+  .entry-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--green-dark);
+  }
+
+  .entry-body {
+    font-size: 0.875rem;
+    font-weight: 300;
+    line-height: 1.75;
+    color: var(--muted);
+    flex: 1;
+  }
+
+  .entry-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.65rem;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+  }
+
+  .entry-contributor {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .entry-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--green);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1px;
+    transition: border-color 0.15s;
+  }
+
+  .entry-link:hover { border-color: var(--green); }
+
+  .coming-soon {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 5rem 2rem;
+    border: 1px dashed rgba(0,86,63,0.2);
+    border-radius: 2px;
+  }
+
+  .coming-soon h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--green-dark);
+    margin-bottom: 0.6rem;
+  }
+
+  .coming-soon p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  .two-band {
+    background: var(--cream-dark);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .two-band-inner {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  @media (max-width: 680px) {
+    .two-band-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .divider { display: none; }
+  }
+
+  .band-col h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .band-col p {
+    font-size: 0.92rem;
+    font-weight: 300;
+    line-height: 1.85;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .divider { background: var(--border); width: 1px; align-self: stretch; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.1rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: all 0.15s;
+    cursor: pointer;
+    border: none;
+    margin-top: 0.5rem;
+  }
+
+  .btn-green { background: var(--green); color: var(--cream); }
+  .btn-green:hover { background: #006b4f; }
+
+  footer {
+    background: var(--green-dark);
+    color: rgba(250,246,238,0.45);
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+
+  .footer-rule { width: 32px; height: 1px; background: var(--gold); margin: 0 auto 1.5rem; opacity: 0.4; }
+
+  footer p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    line-height: 2.2;
+  }
+
+  footer a { color: rgba(196,160,82,0.7); text-decoration: none; }
+  footer a:hover { color: var(--gold); }
+
+  .event-note {
+    margin-top: 1.25rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+    color: rgba(196,160,82,0.35);
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 3rem 1.25rem; }
+    .exhibit-wrap { padding: 3rem 1.25rem; }
+    nav { padding: 0 1rem; }
+    .nav-brand { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">Sac State · History</span>
+  <a href="#exhibit" class="nav-link active">The Exhibit</a>
+  <a href="#about" class="nav-link">About</a>
+  <a href="#hornet" class="nav-link">Hornet Histories</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Sacramento State Department of History</div>
+    <h1>Erased<br><em>Histories</em></h1>
+    <p class="hero-desc">A student and faculty curated public history project documenting histories that have been removed, suppressed, or overlooked. From right here in Sacramento to communities around the world.</p>
+    <div class="hero-credits">
+      History Department &nbsp;·&nbsp; History Club &nbsp;·&nbsp; Phi Alpha Theta &nbsp;·&nbsp; The Clio &nbsp;·&nbsp; Spring 2026
+    </div>
+  </div>
+</div>
+
+<div id="exhibit">
+  <div class="exhibit-wrap">
+    <div class="section-label">The Exhibit</div>
+    <div class="exhibit-header">
+      <div class="exhibit-title">Student &amp; Faculty Research</div>
+      <span class="count-label" id="count-label"></span>
+    </div>
+
+    <div class="filter-bar">
+      <span class="filter-label">Filter:</span>
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="Federal">Federal</button>
+      <button class="filter-btn" data-filter="Local">Local</button>
+      <button class="filter-btn" data-filter="Native American">Native American</button>
+      <button class="filter-btn" data-filter="African American">African American</button>
+      <button class="filter-btn" data-filter="LGBTQ+">LGBTQ+</button>
+      <button class="filter-btn" data-filter="Women">Women</button>
+      <button class="filter-btn" data-filter="Immigration">Immigration</button>
+      <button class="filter-btn" data-filter="Labor">Labor</button>
+      <button class="filter-btn" data-filter="Sacramento">Sacramento</button>
+    </div>
+
+    <div class="entries-grid" id="entries-grid"></div>
+  </div>
+</div>
+
+<div class="two-band" id="about">
+  <div class="two-band-inner">
+
+    <div class="band-col">
+      <div class="section-label">About</div>
+      <h2>What gets left out of the historical record, and why?</h2>
+      <p>That question is where this project started. Erased Histories documents histories that have been removed, suppressed, or overlooked at any level and anywhere in the world.</p>
+      <p>Students and faculty researched and wrote the entries you see here. The exhibit is free to explore and open to anyone. It grows as more contributors are added.</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="band-col" id="hornet">
+      <div class="section-label">Hornet Histories</div>
+      <h2>Your story belongs in the archive.</h2>
+      <p>Hornet Histories is the participatory side of this project. Built around the idea that Sac State students carry stories worth preserving. Personal histories, family histories, community histories that have not been told yet.</p>
+      <p>You do not need to be a history major to contribute.</p>
+      <a href="https://forms.gle/MmJWgxj2TUUTZ5vL9" class="btn btn-green" target="_blank" rel="noopener">Share your story</a>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-rule"></div>
+  <p>Erased Histories &nbsp;·&nbsp; Sacramento State Department of History</p>
+  <p><a href="https://www.csus.edu/college/arts-letters/history/" target="_blank" rel="noopener">csus.edu/history</a> &nbsp;·&nbsp; <a href="https://www.instagram.com/sacstatehistory/" target="_blank" rel="noopener">@SacStateHistory</a></p>
+  <p class="event-note">Pop-up event: April 14, 2026 · 12 to 2pm · Outdoor Theater, Sac State</p>
+</footer>
+
+<script>
+const entries = [
+  // ADD ENTRIES HERE. Each one looks like:
+  // {
+  //   title: "Title of the entry",
+  //   tags: ["Federal", "Native American"],
+  //   body: "Description of what was erased and why it matters.",
+  //   contributor: "First Last",
+  //   link: "https://source.com",   // optional
+  //   student: true                 // optional, shows a badge
+  // }
+];
+
+const grid = document.getElementById('entries-grid');
+const countLabel = document.getElementById('count-label');
+
+function renderEntries(filter) {
+  const filtered = filter === 'all' ? entries : entries.filter(e => e.tags && e.tags.includes(filter));
+  countLabel.textContent = filtered.length === 1 ? '1 entry' : filtered.length > 0 ? filtered.length + ' entries' : '';
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div class="coming-soon">
+        <h3>Entries coming soon</h3>
+        <p>Student and faculty research will appear here as contributions are reviewed. Check back soon.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(e => `
+    <div class="entry-card">
+      <div class="entry-tags">
+        ${e.student ? '<span class="entry-tag student">Student Research</span>' : ''}
+        ${(e.tags || []).map(t => `<span class="entry-tag">${t}</span>`).join('')}
+      </div>
+      <div class="entry-title">${e.title}</div>
+      <div class="entry-body">${e.body}</div>
+      <div class="entry-footer">
+        <span class="entry-contributor">${e.contributor || 'Contributor'}</span>
+        ${e.link ? `<a class="entry-link" href="${e.link}" target="_blank" rel="noopener">Source</a>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderEntries(btn.dataset.filter);
+  });
+});
+
+renderEntries('all');
+</script>
+
+</body>
+</html>
