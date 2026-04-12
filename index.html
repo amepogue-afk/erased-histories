@@ -29,6 +29,37 @@
     line-height: 1.7;
   }
 
+  .scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-top: 3rem;
+  }
+
+  .scroll-hint-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .scroll-arrow {
+    width: 32px;
+    height: 32px;
+    border-right: 2px solid var(--gold);
+    border-bottom: 2px solid var(--gold);
+    transform: rotate(45deg);
+    margin-top: -10px;
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: rotate(45deg) translateY(0); }
+    50% { transform: rotate(45deg) translateY(4px); }
+  }
+
   nav {
     background: var(--green-dark);
     padding: 0 2rem;
@@ -420,10 +451,105 @@
     color: rgba(196,160,82,0.35);
   }
 
+
+  .entry-img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 0;
+    display: block;
+    margin: -1.75rem -1.75rem 0.75rem -1.75rem;
+    width: calc(100% + 3.5rem);
+  }
+
+  .entry-credit {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-top: -0.25rem;
+    font-style: italic;
+  }
+
+
+  .content-note {
+    margin-top: 1.25rem;
+    padding: 0.85rem 1rem;
+    border-left: 2px solid var(--gold);
+    background: rgba(196,160,82,0.06);
+    max-width: 680px;
+  }
+
+  .content-note p {
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+
+  .about-band {
+    background: var(--cream-dark);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .about-inner {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+  }
+
+  .about-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+  }
+
+  .about-body {
+    font-size: 0.98rem;
+    font-weight: 300;
+    color: var(--muted);
+    max-width: 680px;
+    line-height: 1.85;
+  }
+
   @media (max-width: 600px) {
     .hero { padding: 3rem 1.25rem; }
     .exhibit-wrap { padding: 3rem 1.25rem; }
-    nav { padding: 0 1rem; }
+    .scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-top: 3rem;
+  }
+
+  .scroll-hint-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .scroll-arrow {
+    width: 32px;
+    height: 32px;
+    border-right: 2px solid var(--gold);
+    border-bottom: 2px solid var(--gold);
+    transform: rotate(45deg);
+    margin-top: -10px;
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: rotate(45deg) translateY(0); }
+    50% { transform: rotate(45deg) translateY(4px); }
+  }
+
+  nav { padding: 0 1rem; }
     .nav-brand { display: none; }
   }
 </style>
@@ -444,6 +570,22 @@
     <p class="hero-desc">A student and faculty curated public history project documenting histories that have been removed, suppressed, or overlooked. From right here in Sacramento to communities around the world.</p>
     <div class="hero-credits">
       History Department &nbsp;·&nbsp; History Club &nbsp;·&nbsp; Phi Alpha Theta &nbsp;·&nbsp; The Clio &nbsp;·&nbsp; Spring 2026
+    </div>
+    <div class="scroll-hint" id="scroll-hint">
+      <span class="scroll-hint-label">Scroll to explore</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="about-band" id="about">
+  <div class="about-inner">
+    <div class="section-label">About the Project</div>
+    <h2 class="about-title">What gets left out of the historical record, and why?</h2>
+    <p class="about-body">That question is where this project started. Erased Histories is a student and faculty curated public history project documenting histories that have been removed, suppressed, or overlooked at any level and anywhere in the world. Students and faculty researched and wrote the entries you see here. The exhibit is free to explore and open to anyone. It grows as more contributors are added.</p>
+    <div class="content-note">
+      <p>Some entries in this exhibit include descriptions and images of historical violence, racial injustice, and sexual violence. We have included this material because we believe these histories deserve to be seen and understood. Please engage at your own pace.</p>
     </div>
   </div>
 </div>
@@ -468,30 +610,23 @@
       <button class="filter-btn" data-filter="Immigration">Immigration</button>
       <button class="filter-btn" data-filter="Labor">Labor</button>
       <button class="filter-btn" data-filter="Sacramento">Sacramento</button>
+      <button class="filter-btn" data-filter="Global">Global</button>
+      <button class="filter-btn" data-filter="Civil Rights">Civil Rights</button>
     </div>
 
     <div class="entries-grid" id="entries-grid"></div>
   </div>
 </div>
 
-<div class="two-band" id="about">
-  <div class="two-band-inner">
+<div class="two-band" id="hornet">
+  <div class="two-band-inner" style="grid-template-columns: 1fr;">
 
     <div class="band-col">
-      <div class="section-label">About</div>
-      <h2>What gets left out of the historical record, and why?</h2>
-      <p>That question is where this project started. Erased Histories documents histories that have been removed, suppressed, or overlooked at any level and anywhere in the world.</p>
-      <p>Students and faculty researched and wrote the entries you see here. The exhibit is free to explore and open to anyone. It grows as more contributors are added.</p>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="band-col" id="hornet">
       <div class="section-label">Hornet Histories</div>
       <h2>Your story belongs in the archive.</h2>
       <p>Hornet Histories is the participatory side of this project. Built around the idea that Sac State students carry stories worth preserving. Personal histories, family histories, community histories that have not been told yet.</p>
       <p>You do not need to be a history major to contribute.</p>
-      <a href="https://forms.gle/yjaUwCcLGiAkzjKa7" class="btn btn-green" target="_blank" rel="noopener">Share your story</a>
+      <a href="https://forms.gle/F6gc6sFT5FnAD5fY6" class="btn btn-green" target="_blank" rel="noopener">Share your story</a>
     </div>
 
   </div>
@@ -506,15 +641,102 @@
 
 <script>
 const entries = [
-  // ADD ENTRIES HERE. Each one looks like:
-  // {
-  //   title: "Title of the entry",
-  //   tags: ["Federal", "Native American"],
-  //   body: "Description of what was erased and why it matters.",
-  //   contributor: "First Last",
-  //   link: "https://source.com",   // optional
-  //   student: true                 // optional, shows a badge
-  // }
+  {
+    title: "Scourged Back",
+    tags: ["Federal", "African American"],
+    body: "This 1863 photograph entitled \"Scourged Back,\" is a shocking image of the back of a former enslaved man turned union soldier named Peter. He sits revealing his naked back, lined with numerous scars from being whipped, raised tissue overlapping each other from the bottom of his spine to his shoulders. A reproduction of this photograph was removed from Fort Pulaski National Park's Visitor Center in Georgia, since it depicts a 'negative history'. Fort Pulaski was a site of Southern surrender during the Civil War, and the Union was able to use its strategic location to help blockade supplies into Georgia. Additionally, it also became a site of the underground railroad, where many escaped slaves enlisted into the Union Army. This photo was extremely important to the abolitionist momentum during the Civil War. The brutality captured here showcases the horrible truth of slavery, it was a system of violence and subjugation of African peoples. By removing this photograph we erase the moral cause of the civil war, and the role slavery played in it. Peter, and escaped slaves like him who endured extreme hardships and then continued to fight for their freedom are an essential part of Civil War History.",
+    contributor: "Lillian Goodman",
+    link: "https://www.npca.org/articles/10673-parks-group-demands-truth-history-of-slavery-cannot-be-erased-from-our",
+    student: true,
+    image: "scourged-back.jpg",
+    imageCredit: "Mathew Benjamin Brady, 1863 (McPherson & Oliver)"
+  },
+  {
+    title: "Birangona: Testimonies of Sexual Violence During the Bangladesh Liberation War",
+    tags: ["Global", "Women"],
+    body: "Bengali women's testimonies of sexual violence experienced at the hands of Pakistani soldiers during the 1971 Liberation War were and continue to be suppressed by both state apparatuses and the general public. Operating within a fiercely patriarchal context, the government of Bangladesh prioritized projects of nationalist identity over justice for rape victims. Survivors received little or no government support for the physical and psychological tolls they endured, and for the financial burdens faced after the war as a result of societal stigma. State run adoption and abortion programs coerced Bengali women to either exterminate or ship away children conceived through rape. Despite the state's designation of rape survivors as \"Birangona\" (war heroine), the official state attitude was one of indifference. These silenced histories reflect the reality that collective memory and state narratives of mass violence are often deliberately constructed to deal with contemporary concerns of the healing nation. Acknowledgment of such narratives validates the experiences of individuals who were subjected to unimaginable horrors.",
+    contributor: "Ethan Chapman",
+    link: "https://www-jstor-org.proxy.lib.csus.edu/stable/j.ctvgd2jm.13?seq=1",
+    student: true,
+    image: "birangona.jpg",
+    imageCredit: "Mehdi Hasan Khan, CC BY-SA 3.0, Wikimedia Commons"
+  },
+  {
+    title: "History Under Construction: Saving Muir Woods",
+    tags: ["Federal", "Native American"],
+    body: "At Muir Woods National Monument in Marin County, California, the original Saving Muir Woods sign chronicled key conservation milestones while omitting the histories of the Coast Miwok and Southern Pomo peoples who stewarded the land for thousands of years before European contact. In 2021, park rangers installed History Under Construction, overlaying the sign's original timeline with sticky notes documenting Coast Miwok and Southern Pomo presence, the labor exploitation, disease, and genocide of California Indians across the Spanish mission and Gold Rush eras, and the 1861 Congressional removal of Coast Miwok from their ancestral lands. History Under Construction became the first confirmed physical exhibit to be removed under Executive Order 14253, taken down in July 2025, while the original sign remains in the park today. What truly deepens societal divides is the exclusion and erasure of our shared history in all its complexity, nuance, and consequence. Indigenous people have been here, are still here, and their stories are inseparable from the lands we enjoy today.",
+    contributor: "Jordan Hardt",
+    link: "https://www.nps.gov/muwo/learn/historyculture/history-under-construction.htm",
+    student: true
+  },
+  {
+    title: "Saving Muir Woods: The Colonial Concept of Wilderness",
+    tags: ["Federal", "Native American"],
+    body: "History Under Construction was an ongoing project to update historical information on the \"Saving Muir Woods\" sign at Muir Woods National Monument. The sign had yellow paper additions that added history left out of the original timeline, including the history of the Coastal Miwok and Southern Pomo, their stewardship and the colonial violence they experienced. The sticky note editions did not erase any of the pre-existing history on the sign but added additional information and context. Secretarial Order 3431, ironically titled \"Restoring Truth and Sanity to American History,\" caused this additional information to be removed. This sign is a great example of the larger issue around these attempts to remove American history that is complicated or unpleasant. The removal of the additional context reveals the reality of these orders: an effort to use federal power to dictate and control whose history is worth telling. A sign documenting climate change at Muir Woods was also removed as part of Secretarial Order 3431. The forests of Muir Woods are the way they are because they have been lived on and tended to by Indigenous People for centuries.",
+    contributor: "Emma Hunter",
+    link: "https://www.sfgate.com/california-parks/article/muir-woods-national-monument-history-erased-20781301.php",
+    student: true,
+    image: "history-under-construction.jpg",
+    imageCredit: "Wikimedia Commons"
+  },
+  {
+    title: "Bible of Pastor Amos C. Brown and History of the Negro Race: 1618 to 1880",
+    tags: ["Federal", "African American", "Civil Rights"],
+    body: "Civil Rights Activist and Pastor, Dr. Amos C. Brown, had loaned a bible passed from his father and a copy of \"History of the Negro Race: 1618-1880\" to the National Museum of African American History and Culture in D.C. The former of the two books was used and carried by Brown during protests during the Civil Rights Movement. The latter is the first serious take on African American history from Jamestown to Reconstruction which inspired Dr. Brown to partake in social activism. Dr. Brown's books were removed from display and planned to be mailed back to him during the Trump administration's executive attacks on many historical and cultural institutions. Fortunately, due to Dr. Brown's and the public's outcry, the museum kept the books. Though not directly targeted by the federal government, the temporary removal of these specific books is startling. Brown's Bible is an important artifact from the African American community's struggle for Civil Rights and \"History of the Negro Race: 1618-1880\" is an important milestone for black historiography.",
+    contributor: "Erik Maynard Jackson",
+    link: "https://youtu.be/kzKo-ReT4xw?si=OOJgJEJ68eR5JE7G",
+    student: true
+  },
+  {
+    title: "Censorship and Revisionism at Harpers Ferry National Historical Park",
+    tags: ["Federal", "African American"],
+    body: "A number of educational materials at Harpers Ferry National Historical Park were either erased or revised to remove phrases and ideas which correctly identified the racist and vitriolic beliefs of anti-abolitionists and Confederates in the Antebellum period. Changes include omitting direct quotes from the Vice President of the Confederacy and segments of Confederate states' declarations of secession which cite slavery as the leading cause for leaving the Union; policing of language to take a softer tone towards a lynch mob who murdered a prominent abolitionist in 1837; and removing references to the South's secession as a \"rebellion.\" The way in which the historical content has been edited removes motivation from historical actors. This \"smooths out\" history, making it easier to deny a racist past which still affects those today. Censoring historical facts which \"disparage\" those Americans of the past who took it upon themselves to uphold slavery makes it more difficult to come to terms with America's racist history.",
+    contributor: "William Robert Reed",
+    link: "https://archive.ph/20260311200114/https://www.washingtonpost.com/climate-environment/2026/03/02/national-parks-signs-censorship-slavery/",
+    student: true,
+    image: "harpers-ferry.jpg",
+    imageCredit: "Unknown author, public domain"
+  },
+  {
+    title: "The Little Lyra from Kars",
+    tags: ["Global"],
+    body: "It is a lyra, a type of bowed instrument similar to a fiddle, carried by a Pontian fleeing the 1920s genocide in what is now Türkiye. Carved from a pear tree, it has been passed down through the Ilias-Koimtsidi family. This one-hundred-and-twenty-year-old artifact is a remnant from a more peaceful time, before the Pontian people were displaced from their homeland. It is a simple thing, a small thing, carried by a family desperately trying to keep its roots. Though Ilias, the carver, and his son Chariton are no longer alive, their great-great-granddaughter maintains the sanctity of the artifact, cracked, and whittled away by time. Though its corporeal form decays, its spirit, a twanging echo of Pontians passed, lives on.",
+    contributor: "Devon Hayes",
+    link: "https://www.instagram.com/pontianlegacies/",
+    student: true,
+    image: "little-lyra.jpg",
+    imageCredit: "From the collection of Danae Koimtsidi and family"
+  },
+  {
+    title: "Pentagon DEI Photograph Purge",
+    tags: ["Federal", "African American", "Women"],
+    body: "In March 2025, the Associated Press reported that the Defense Department, under orders from President Donald Trump, possessed a database containing over 26,000 images and social media posts marked for deletion. Among the massive catalogue of photos were historically relevant photographs such as photos of the Tuskegee Airmen and references to female military servicemembers. One of the most shocking photos selected for deletion was a photograph of the Enola Gay, the B-29 bomber that famously dropped the first atomic bomb over Hiroshima, Japan. The decision to delete this photograph ultimately had less to do with curbing DEI and more to do with a keyword error on the word \"gay.\" An Air Force spokesperson confirmed that \"Some information was removed based on a keyword search.\" Despite public outcry, Secretary Pete Hegseth remained supportive of such actions, stating: \"We are leaving wokeness and weakness behind. DEI is dead at DOD.\" What will become of these historical records remains unclear.",
+    contributor: "Ciaran Henderson",
+    link: "https://www.snopes.com/news/2025/03/10/dei-enola-gay-wwii/",
+    student: true,
+    image: "enola-gay.jpg",
+    imageCredit: "Public domain, U.S. Air Force"
+  },
+  {
+    title: "Erasure of Diversity in the Naval History and Heritage Command Digital Archive",
+    tags: ["Federal", "African American", "Women", "LGBTQ+"],
+    body: "The Naval History and Heritage Command website is an official military webpage dedicated to preserving the history of the United States Navy. A large portion of this archive is dedicated to memorializing the notable individuals who have contributed to this history, but following executive orders provided within the first few weeks of Donald Trump's administration, certain people and their contributions have been removed from the site. These individuals include women, people of color, and members of the LGBTQIA+ community. His administration's attacks not only restrict diversity within professional fields, they are attempting to eliminate it from history. It is not as though the stories of those mentioned above have not been told, but instead they have been actively targeted and removed from the public domain. History belongs to us all.",
+    contributor: "Atlas McDermott",
+    link: "https://www.history.navy.mil/",
+    student: true,
+    image: "naval-archive.png",
+    imageCredit: "Screenshot via Wayback Machine, January 8, 2025"
+  },
+  {
+    title: "Stonewall National Monument: Erasing Trans and Genderqueer History",
+    tags: ["Federal", "LGBTQ+", "Civil Rights"],
+    body: "Stonewall National Monument commemorates the spontaneous six-day uprising against police harassment and social discrimination by a diverse crowd of LGBTQ+ community members in the streets of Manhattan in 1969. Credited with catalyzing a more militant and organized phase of the queer liberation movement in the United States, Stonewall was a crucial moment in the country's wider history of struggle toward social equality. One of the earliest acts of the second Trump administration in 2025 was to scrub the NPS' Stonewall website of references to transgender and genderqueer identities, and consequently from any role in the uprising itself. The common term \"LGBTQ\" was edited to \"LGB,\" a phrase sometimes used by conservative groups actively seeking to decouple the struggle for trans and genderqueer rights from the wider LGBTQ+ movement. By manipulating the memory of collective resistance at Stonewall, the administration was also engaging in a divide-and-conquer strategy targeting the wider LGBTQ+ solidarity that has underpinned the queer liberation movement.",
+    contributor: "Simon Russell",
+    link: "https://www.nps.gov/ston/index.htm",
+    student: true,
+    image: "stonewall.jpg",
+    imageCredit: "Collage by Simon Russell using public domain images from Wikimedia Commons"
+  }
 ];
 
 const grid = document.getElementById('entries-grid');
@@ -535,12 +757,14 @@ function renderEntries(filter) {
 
   grid.innerHTML = filtered.map(e => `
     <div class="entry-card">
+      ${e.image ? `<img class="entry-img" src="${e.image}" alt="${e.title}" loading="lazy" onerror="this.style.display='none'">` : ''}
       <div class="entry-tags">
         ${e.student ? '<span class="entry-tag student">Student Research</span>' : ''}
         ${(e.tags || []).map(t => `<span class="entry-tag">${t}</span>`).join('')}
       </div>
       <div class="entry-title">${e.title}</div>
       <div class="entry-body">${e.body}</div>
+      ${e.imageCredit ? `<div class="entry-credit">${e.imageCredit}</div>` : ''}
       <div class="entry-footer">
         <span class="entry-contributor">${e.contributor || 'Contributor'}</span>
         ${e.link ? `<a class="entry-link" href="${e.link}" target="_blank" rel="noopener">Source</a>` : ''}
