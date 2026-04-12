@@ -303,6 +303,106 @@
 
   .read-more-btn:hover { color: var(--green-dark); }
 
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,43,32,0.85);
+    z-index: 200;
+    overflow-y: auto;
+    padding: 2rem 1rem;
+  }
+
+  .modal-overlay.open { display: block; }
+
+  .modal-box {
+    background: var(--cream);
+    max-width: 720px;
+    margin: 0 auto;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .modal-img {
+    width: 100%;
+    max-height: 320px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .modal-body {
+    padding: 2rem 2.5rem;
+  }
+
+  .modal-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    color: var(--green-dark);
+    line-height: 1.2;
+    margin-bottom: 1.25rem;
+  }
+
+  .modal-text {
+    font-size: 0.95rem;
+    font-weight: 300;
+    line-height: 1.85;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-credit {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .modal-contributor {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .modal-close {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 0.4rem 0.85rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+  }
+
+  .modal-close:hover { border-color: var(--green); color: var(--green); }
+
+  .entry-card { cursor: pointer; }
+
   .entry-card {
     background: white;
     border: 1px solid var(--border);
@@ -693,11 +793,48 @@ function toggleEntry(idx) {
   }
 }
 
+function openModal(idx) {
+  const e = currentEntries[idx];
+  const overlay = document.getElementById('modal-overlay');
+  const tags = (e.tags || []).map(t => `<span class="entry-tag">${t}</span>`).join('');
+  const studentTag = e.student ? '<span class="entry-tag student">Student Research</span>' : '';
+  const img = e.image ? `<img class="modal-img" src="${e.image}" alt="${e.title}" loading="lazy">` : '';
+  const credit = e.imageCredit ? `<div class="modal-credit">${e.imageCredit}</div>` : '';
+  const source = e.link ? `<a class="entry-link" href="${e.link}" target="_blank" rel="noopener">Source</a>` : '';
+
+  document.getElementById('modal-content').innerHTML = `
+    ${img}
+    <div class="modal-body">
+      <div class="modal-tags">${studentTag}${tags}</div>
+      <div class="modal-title">${e.title}</div>
+      <div class="modal-text">${e.body}</div>
+      ${credit}
+      <div class="modal-footer">
+        <span class="modal-contributor">${e.contributor || 'Contributor'}</span>
+        <div style="display:flex;gap:0.75rem;align-items:center;">
+          ${source}
+          <button class="modal-close" onclick="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  `;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(event) {
+  if (event && event.target !== document.getElementById('modal-overlay')) return;
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+let currentEntries = [];
+
 const entries = [
   {
     title: "Scourged Back",
     tags: ["Federal", "African American"],
-    body: "This 1863 photograph entitled \"Scourged Back,\" is a shocking image of the back of a former enslaved man turned union soldier named Peter. He sits revealing his naked back, lined with numerous scars from being whipped, raised tissue overlapping each other from the bottom of his spine to his shoulders. A reproduction of this photograph was removed from Fort Pulaski National Park’s Visitor Center in Georgia, since it depicts a ‘negative history’. Fort Pulaski was a site of Southern surrender during the Civil War, and the Union was able to use its strategic location to help blockade supplies into Georgia. Additionally, it also became a site of the underground railroad, where many escaped slaves enlisted into the Union Army. This photo was extremely important to the abolitionist momentum during the Civil War. The brutality captured here showcases the horrible truth of slavery, it was a system of violence and subjugation of African peoples. The photograph captures the horrors that slavery enabled and encouraged. By removing this photograph we erase the moral cause of the civil war, and the role slavery played in it. We remove the very real cruelty that existed hand in hand with the Southern way of life. Peter, and escaped slaves like him who endured extreme hardships and then continued to fight for their freedom are an essential part of Civil War History.",
+    body: "This 1863 photograph entitled \"Scourged Back,\" is a shocking image of the back of a former enslaved man turned union soldier named Peter. He sits revealing his naked back, lined with numerous scars from being whipped, raised tissue overlapping each other from the bottom of his spine to his shoulders. A reproduction of this photograph was removed from Fort Pulaski National Park’s Visitor Center in Georgia, since it depicts a ‘negative history’. Fort Pulaski was a site of Southern surrender during the Civil War, and the Union was able to use its strategic location to help blockade supplies into Georgia. Additionally, it also became a site of the underground railroad, where many escaped slaves enlisted into the Union Army. This photo was extremely important to the abolitionist momentum during the Civil War. The brutality captured here showcases the horrible truth of slavery, it was a system of violence and subjugation of African peoples. The photograph captures the horrors that slavery enabled and encouraged. By removing this photograph we erase the moral cause of the civil war, and the role slavery played in it. We remove the very real cruelty that existed hand in hand with the Southern way of life. Peter, and escaped slaves like him who endured extreme hardships and then continued to fight for their freedom are an essential part of Civil War History. Our negative history is still OUR history and it needs to be taught. The legacy of slavery still is impacting United States racial relationships in the present day, it cannot be erased.",
     contributor: "Lillian Goodman",
     link: "https://www.npca.org/articles/10673-parks-group-demands-truth-history-of-slavery-cannot-be-erased-from-our",
     student: true,
@@ -707,7 +844,7 @@ const entries = [
   {
     title: "Birangona Testimonies of Sexual Violence During the Bangladesh Liberation War, 1971",
     tags: ["Global", "Women"],
-    body: "Bengali women’s testimonies of sexual violence experienced at the hands of Pakistani soldiers during the 1971 Liberation War were and continue to be suppressed by both state apparatuses and the general public. Operating within a fiercely patriarchal context despite deceptive concern for women survivors’ reintegration into society, the government of Bangladesh prioritized projects of nationalist identity over justice for rape victims. Survivors received little or no government support, both for the physical and psychological tolls of the episodes of sexual violence they endured, and for the financial burdens faced after the war as a result of societal stigma towards raped women. State run adoption and abortion programs coerced Bengali women to either exterminate or ship away children conceived through rape. These “war babies” were reminders of an attack on Bengali identity, resulting in the forcible appropriation of women’s bodies for state interests. Furthermore, Bengali collaborators with the Pakistani army began to be gradually reintegrated into local and state level government offices in the years after the war, resulting in the silencing of narratives in both direct and indirect fashion. Despite the state’s designation of rape survivors in the war as “Birangona” (war heroine), the official state attitude was one of indifference and rejection of narratives reflecting the grim realities many of these women experienced. The presence of Birangona serves as a painful reminder of the collapse of societal gender norms during the war, such as female seclusion and purity, as well as the masculine ability to defend women. Therefore, an acknowledgment of such narratives is important on two levels. These silenced histories reflect the reality that collective memory and state narratives of mass violence are often deliberately constructed to deal with contemporary concerns of the healing nation. Oftentimes, individual narratives that contradict the image the nation wants to project are either overshadowed or deliberately erased entirely as a result. Secondly, on a micro-level, acknowledgment of such narratives is important because it validates the experiences of the individuals who were subjected to unimaginable horrors.",
+    body: "Bengali women’s testimonies of sexual violence experienced at the hands of Pakistani soldiers during the 1971 Liberation War were and continue to be suppressed by both state apparatuses and the general public. Operating within a fiercely patriarchal context despite deceptive concern for women survivors’ reintegration into society, the government of Bangladesh prioritized projects of nationalist identity over justice for rape victims. Survivors received little or no government support, both for the physical and psychological tolls of the episodes of sexual violence they endured, and for the financial burdens faced after the war as a result of societal stigma towards raped women. State run adoption and abortion programs coerced Bengali women to either exterminate or ship away children conceived through rape. These “war babies” were reminders of an attack on Bengali identity, resulting in the forcible appropriation of women’s bodies for state interests. Furthermore, Bengali collaborators with the Pakistani army began to be gradually reintegrated into local and state level government offices in the years after the war, resulting in the silencing of narratives in both direct and indirect fashion. Despite the state’s designation of rape survivors in the war as “Birangona” (war heroine), the official state attitude was one of indifference and rejection of narratives reflecting the grim realities many of these women experienced. The presence of Birangona serves as a painful reminder of the collapse of societal gender norms during the war, such as female seclusion and purity, as well as the masculine ability to defend women. Therefore, an acknowledgment of such narratives is important on two levels. These silenced histories reflect the reality that collective memory and state narratives of mass violence are often deliberately constructed to deal with contemporary concerns of the healing nation. Oftentimes, individual narratives that contradict the image the nation wants to project are either overshadowed or deliberately erased entirely as a result. Secondly, on a micro-level, acknowledgment of such narratives is important because it validates the experiences of the individuals who were subjected to unimaginable horrors. The vast majority of Pakistani perpetrators of mass violence within Bangladesh, including various forms of sexual violence, have not been prosecuted for their crimes. Many of them have died in the decades since. Some of them remain alive today. Pakistan has never organized large-scale prosecutions for these crimes. Furthermore, United States involvement in arming and politically supporting Pakistan, despite knowledge of the atrocities committed with those weapons, is largely absent from mainstream historical narratives.",
     contributor: "Ethan Chapman",
     link: "https://www-jstor-org.proxy.lib.csus.edu/stable/j.ctvgd2jm.13?seq=1",
     student: true,
@@ -717,7 +854,7 @@ const entries = [
   {
     title: "History Under Construction: Saving Muir Woods",
     tags: ["Federal", "Native American"],
-    body: "At Muir Woods National Monument in Marin County, California, a site called Founders Grove is named to honor individuals who worked to preserve the redwood forests in the late 19th and early 20th centuries. The original sign at Founders Grove, Saving Muir Woods, chronicled key conservation milestones, positioning John Muir, Gifford Pinchot, William Kent, and Theodore Roosevelt as central figures in the forest’s preservation while omitting the histories of the Coast Miwok and Southern Pomo peoples who stewarded the land for thousands of years before European contact. In 2021, park rangers installed History Under Construction, overlaying the sign’s original timeline with sticky notes documenting the presence of Coast Miwok and Southern Pomo in present-day Marin and Sonoma Counties, the labor exploitation, disease, and genocide of California Indians across the Spanish mission and Gold Rush eras, and the 1861 Congressional removal of Coast Miwok from their ancestral lands. Signed in March 2025, Executive Order 14253: Restoring Truth and Sanity to American History ordered the removal of content at federal sites deemed to \"inappropriately disparage Americans past or living,” and Secretarial Order 3431 specifically targeted National Parks, requiring NPS to flag “non-compliant” material for subsequent removal. History Under Construction became the first confirmed physical exhibit to be removed under the order, taken down in July 2025, while the original sign, Saving Muir Woods, remains in the park today. Executive Order 14253 justifies the removal of History Under Construction and exhibits like it throughout the nation by claiming that a comprehensive, accurate interpretation of history “deepens societal divides and fosters a sense of national shame.” What truly deepens societal divides, however, is the exclusion and erasure of our shared history in all its complexity, nuance, and consequence. The Coast Miwok and Southern Pomo people stewarded the land that today encompasses Muir Woods for thousands of years, yet Native histories are particularly vulnerable to these erasures because their experiences complicate narratives that many national monuments are built to celebrate. Removing the complex histories of the Coast Miwok and Southern Pomo people does not perpetuate the “distorted narrative” the order claims; rather, it engages perspectives that challenge long-standing narratives that can narrow our collective understanding of history. Eliminating evidence of Native survivance contributes to the exclusion and erasure that History Under Construction was created to challenge, reminding the park’s visitors that Indigenous people have been here, are still here, and that their stories are inseparable from the lands we enjoy today.",
+    body: "At Muir Woods National Monument in Marin County, California, a site called Founders Grove is named to honor individuals who worked to preserve the redwood forests in the late 19th and early 20th centuries. The original sign at Founders Grove, Saving Muir Woods, chronicled key conservation milestones, positioning John Muir, Gifford Pinchot, William Kent, and Theodore Roosevelt as central figures in the forest’s preservation while omitting the histories of the Coast Miwok and Southern Pomo peoples who stewarded the land for thousands of years before European contact. In 2021, park rangers installed History Under Construction, overlaying the sign’s original timeline with sticky notes documenting the presence of Coast Miwok and Southern Pomo in present-day Marin and Sonoma Counties, the labor exploitation, disease, and genocide of California Indians across the Spanish mission and Gold Rush eras, and the 1861 Congressional removal of Coast Miwok from their ancestral lands. Signed in March 2025, Executive Order 14253: Restoring Truth and Sanity to American History ordered the removal of content at federal sites deemed to \"inappropriately disparage Americans past or living,” and Secretarial Order 3431 specifically targeted National Parks, requiring NPS to flag “non-compliant” material for subsequent removal. History Under Construction became the first confirmed physical exhibit to be removed under the order, taken down in July 2025, while the original sign, Saving Muir Woods, remains in the park today. Executive Order 14253 justifies the removal of History Under Construction and exhibits like it throughout the nation by claiming that a comprehensive, accurate interpretation of history “deepens societal divides and fosters a sense of national shame.” What truly deepens societal divides, however, is the exclusion and erasure of our shared history in all its complexity, nuance, and consequence. The Coast Miwok and Southern Pomo people stewarded the land that today encompasses Muir Woods for thousands of years, yet Native histories are particularly vulnerable to these erasures because their experiences complicate narratives that many national monuments are built to celebrate. Removing the complex histories of the Coast Miwok and Southern Pomo people does not perpetuate the “distorted narrative” the order claims; rather, it engages perspectives that challenge long-standing narratives that can narrow our collective understanding of history. Eliminating evidence of Native survivance contributes to the exclusion and erasure that History Under Construction was created to challenge, reminding the park’s visitors that Indigenous people have been here, are still here, and that their stories are inseparable from the lands we enjoy today. The History Under Construction exhibit further documented the near decimation of the Coast Miwok. By the 1880s, only 14 known individuals remained; today, all Coast Miwok people trace their ancestry back to those 14 individuals. The exhibit also noted the federal termination of the Coast Miwok under the 1958 California Rancheria Act and their restoration alongside the Southern Pomo as the Federated Indians of Graton Rancheria in 2000. Additions regarding the park’s founders highlighted the racist language John Muir employed to refer to Indigenous people in his published diary, Gifford Pinchot and Theodore Roosevelt’s staunch support for the eugenics movement, and Congressman William Kent’s anti-Asian rhetoric and policy. Removing these additions from Muir Woods National Monument reverts the way the story is told to a simple, sanitized account that erases the experiences and voices of Native people, denying park visitors a comprehensive history of the land they stand on.",
     contributor: "Jordan Hardt",
     link: "https://www.cbsnews.com/news/signs-of-the-times-removing-stories-of-americas-past-from-our-national-parks/",
     student: true
@@ -725,7 +862,7 @@ const entries = [
   {
     title: "Saving Muir Woods: History Under Construction",
     tags: ["Federal", "Native American"],
-    body: "History Under Construction was an ongoing project to update historical information on the “Saving Muir Woods” sign, part of the Muir Woods National Monument. The sign had yellow paper additions that added history that was left out of the timeline on the original sign. This included the history of the Coastal Miwok and Southern Pomo, their stewardship and the colonial violence they experienced. The updated information also highlighted the role of the women's The California Club in launching the initial efforts to save the redwoods there. The sign further highlighted the complicated history of this site, and our Parks at large, by discussing the racist and eugenic views held by key figures like John Muir, Theodore Roosevelt, Gifford Pinchot, and William Kent, as well as the aforementioned women's club. The sticky note editions did not erase any of the pre-existing history on the sign but added additional information and context. By doing so it highlighted the history that is often left out, as well as the multifaceted and complicated history that not only makes up the founding of our National Parks but America as a whole. This sign was one of the first affected by Trump's executive orders that sought to revise the way American history is told. Secretarial Order 3431, ironically titled \"Restoring Truth and Sanity to American History,\" caused this additional information to be removed from the sign. This sign is a great example of the larger issue around these attempts to remove American history that is complicated or unpleasant, all the while claiming to be in the name of a more \"balanced\" interpretation of American history. Unlike Secretarial Order 3431 the sign did not remove any of the pre-existing information, it simply added on to it. The removal of the additional context reveals the reality of these orders; which is an effort to use federal power to dictate and control whose history is worth telling as well as what is seen as acceptable American history. Fortunately the website holding this information from this sign is still up. However, the removal of the \"History Under Construction\" information from the \"Saving Muir Woods\" sign robs visitors of the complete history of the Park, a place that should invite such quiet condemnation of this history.",
+    body: "History Under Construction was an ongoing project to update historical information on the “Saving Muir Woods” sign, part of the Muir Woods National Monument. The sign had yellow paper additions that added history that was left out of the timeline on the original sign. This included the history of the Coastal Miwok and Southern Pomo, their stewardship and the colonial violence they experienced. The updated information also highlighted the role of the women's The California Club in launching the initial efforts to save the redwoods there. The sign further highlighted the complicated history of this site, and our Parks at large, by discussing the racist and eugenic views held by key figures like John Muir, Theodore Roosevelt, Gifford Pinchot, and William Kent, as well as the aforementioned women's club. The sticky note editions did not erase any of the pre-existing history on the sign but added additional information and context. By doing so it highlighted the history that is often left out, as well as the multifaceted and complicated history that not only makes up the founding of our National Parks but America as a whole. This sign was one of the first affected by Trump's executive orders that sought to revise the way American history is told. Secretarial Order 3431, ironically titled \"Restoring Truth and Sanity to American History,\" caused this additional information to be removed from the sign. This sign is a great example of the larger issue around these attempts to remove American history that is complicated or unpleasant, all the while claiming to be in the name of a more \"balanced\" interpretation of American history. Unlike Secretarial Order 3431 the sign did not remove any of the pre-existing information, it simply added on to it. The removal of the additional context reveals the reality of these orders; which is an effort to use federal power to dictate and control whose history is worth telling as well as what is seen as acceptable American history. Fortunately the website holding this information from this sign is still up. However, the removal of the \"History Under Construction\" information from the \"Saving Muir Woods\" sign robs visitors of the complete history of the Park, a place that should invite such quiet condemnation of this history. The removal of this critical additional context works to uphold an idea of National Parks as preserving historically \"untouched\" and \"wild\" land. This is also seen with the language on the QR codes that were placed on many National Parks plaques and signs; which asked people to report signs that \"fail to emphasize the beauty, grandeur, and abundances of landscapes and other natural features.\" This is a direct attempt to uphold a colonial concept of wilderness which serves to further erase the history of Indigenous occupation and stewardship. To further this irony a sign documenting climate change at Muir Woods was also removed as part of Secretarial Order 3431. The forests of the Muir Woods National Monument, like many other landscapes across America, are the way they are because they have been lived on and tended to by Indigenous People for centuries. Our National Parks can not be properly understood and appreciated without actively acknowledging this history.",
     contributor: "Emma Hunter",
     link: "https://www.sfgate.com/california-parks/article/muir-woods-national-monument-history-erased-20781301.php",
     student: true,
@@ -735,7 +872,7 @@ const entries = [
   {
     title: "Bible of Pastor Amos C. Brown and Copy of “History of the Negro Race: 1618-1880.\"",
     tags: ["Federal", "African American", "Civil Rights"],
-    body: "Civil Rights Activist and Pastor, Dr. Amos C. Brown, had loaned a bible passed from his father and a copy of “History of the Negro Race: 1618-1880\" to the National Museum of African American History and Culture in D.C. The former of the two books was used and carried by Brown during protests during the Civil Rights Movement. The latter is the first serious take on African American history from Jamestown to Reconstruction which inspired Dr. Brown to partake in social activism. Dr. Brown’s books were removed from display and planned to be mailed back to him. This happened in the Spring of 2025 during the Trump administration’s executive attacks on many historical and cultural institutions. Fortunately, due to Dr. Brown’s and the public’s outcry, the National Museum of African American History and Culture kept the books. Though not directly targeted by the federal government, the temporary removal of these specific books is startling. Brown’s Bible is an important artifact from the African American community’s struggle for Civil Rights and “History of the Negro Race: 1618-1880\" is an important milestone for black historiography.",
+    body: "Civil Rights Activist and Pastor, Dr. Amos C. Brown, had loaned a bible passed from his father and a copy of “History of the Negro Race: 1618-1880\" to the National Museum of African American History and Culture in D.C. The former of the two books was used and carried by Brown during protests during the Civil Rights Movement. The latter is the first serious take on African American history from Jamestown to Reconstruction which inspired Dr. Brown to partake in social activism. Dr. Brown’s books were removed from display and planned to be mailed back to him. This happened in the Spring of 2025 during the Trump administration’s executive attacks on many historical and cultural institutions. Fortunately, due to Dr. Brown’s and the public’s outcry, the National Museum of African American History and Culture kept the books. Though not directly targeted by the federal government, the temporary removal of these specific books is startling. Brown’s Bible is an important artifact from the African American community’s struggle for Civil Rights and “History of the Negro Race: 1618-1880\" is an important milestone for black historiography. Dr. Amos C. Brown said in the NBC news article that: “...[The African American community] took a negative and turned it into a positive, and telling the story of how people achieved great things in spite of oppression, in spite of those evil things that were done to us, that’s what that museum represents.” The very book that Dr. Brown carried with him during the Civil Rights Movement was instrumental in justifying and perpetuating slavery. The Bible has been used to justify chattel slavery for centuries, painting slavery as a paternal good for enslaved African Americans, that it was fitting for the “children of Ham”. A century later after emancipation, Civil Rights Leaders such as MLK and Dr. Amos C. Brown used the Bible and Christianity to aid in their fight for Civil Rights African Americans had turned something that was forced onto them to keep them in bondage into a force of good that achieved a freer democracy. “History of the Negro Race: 1618-1880\" was written by George Washington Williams who was a free African American who would fight in the American Civil War. His attempt to create a serious historical work of African American history was empowering because he himself was African American during a time where slavery was over, but Jim Crow was becoming in trenched. Though Willams’ work was filled with outdated views; it humanized African and African Americans and was an early step to honest black historiography. Fredrick Douglass once said: “You have seen how a man was made a slave; you shall see how a slave was made a man.”",
     contributor: "Erik Maynard Jackson",
     link: "",
     student: true
@@ -753,7 +890,7 @@ const entries = [
   {
     title: "The Little Lyra from Kars",
     tags: ["Global"],
-    body: "It is a lyra, a type of bowed instrument similar to a fiddle, carried by a Pontian fleeing the 1920s genocide in what is now Türkiye. Carved from a pear tree, it has been passed down through the Ilias-Koimtsidi family. This one-hundred-and-twenty-year-old artifact is a remnant from a more peaceful time, before the Pontian people were displaced from their homeland. It is a simple thing, a small thing, carried by a family desperately trying to keep its roots. Though Ilias, the carver, and his son Chariton are no longer alive, their great-great-granddaughter maintains the sanctity of the artifact, cracked, and whittled away by time. Though its corporeal form decays, its spirit, a twanging echo of Pontians passed, lives on.",
+    body: "It is a lyra, a type of bowed instrument similar to a fiddle, carried by a Pontian fleeing the 1920s genocide in what is now Türkiye. Carved from a pear tree, it has been passed down through the Ilias-Koimtsidi family. This one-hundred-and-twenty-year-old artifact is a remnant from a more peaceful time, before the Pontian people were displaced from their homeland. It is a simple thing, a small thing, carried by a family desperately trying to keep its roots. Though Ilias, the carver, and his son Chariton are no longer alive, their great-great-granddaughter maintains the sanctity of the artifact, cracked, and whittled away by time. Though its corporeal form decays, its spirit, a twanging echo of Pontians passed, lives on. Danae Koimtsidi continues to honor the legacy of the Pontians, and their people, through her Instagram page @PontianLegacies. Without her tireless work cataloguing and maintaining the words of the Pontian people, many items and images, such as her great-great-grandfather's lyra would be histories erased.",
     contributor: "Devon Hayes",
     link: "",
     student: true,
@@ -773,7 +910,7 @@ const entries = [
   {
     title: "The Erasure of Diversity in the Naval History and Heritage Command Digital Archive",
     tags: ["Federal", "African American", "Women", "LGBTQ+"],
-    body: "The aforementioned website is an official military webpage dedicated to preserving the history of the United States Navy. A large portion of this archive is dedicated to memorializing the notable individuals who have contributed to this history, but following executive orders provided within the first few weeks of Donald Trump’s administration, certain people and their contributions have been removed from the site. These individuals include women, people of color, and members of the LBGTQIA+ community. When thinking of Trump’s efforts to dismantle Diversity, Equity, and Inclusion (DEI), many do not realize how this actively affects the ways in which we understand United States history and what information we have access to. His administration’s attacks not only restrict diversity within professional fields, they are attempting to eliminate it from history. It is not as though the stories of those mentioned above have not been told, but instead they have been actively targeted and removed from the public domain.",
+    body: "The aforementioned website is an official military webpage dedicated to preserving the history of the United States Navy. A large portion of this archive is dedicated to memorializing the notable individuals who have contributed to this history, but following executive orders provided within the first few weeks of Donald Trump’s administration, certain people and their contributions have been removed from the site. These individuals include women, people of color, and members of the LBGTQIA+ community. When thinking of Trump’s efforts to dismantle Diversity, Equity, and Inclusion (DEI), many do not realize how this actively affects the ways in which we understand United States history and what information we have access to. His administration’s attacks not only restrict diversity within professional fields, they are attempting to eliminate it from history. It is not as though the stories of those mentioned above have not been told, but instead they have been actively targeted and removed from the public domain. When reading about the “Erased Histories” project, my mind immediately leapt to April of 2025, when I was conducting research for a class. I pulled up the biography of the man I was researching on the website which this topic is focused on, and a large red strip appeared at the top of the page informing me that the information on the website had recently been altered. I had no idea what elements had been changed, only that some information had been removed. As a history student, I was angry; as an American, I was afraid; and finally, as a member of the queer community, I was incredibly disheartened. History is filled with individuals and stories everyone can relate to. The representation is there, but is not shared, creating the illusion of one true narrative told by a patriarch. Our attention must not be diverted from what is important. History belongs to us all.",
     contributor: "Atlas McDermott",
     link: "https://www.history.navy.mil/",
     student: true,
@@ -783,7 +920,7 @@ const entries = [
   {
     title: "Stonewall National Monument: Erasing Trans and Genderqueer History",
     tags: ["Federal", "LGBTQ+", "Civil Rights"],
-    body: "Stonewall National Monument commemorates the spontaneous six-day uprising against police harassment and social discrimination by a diverse crowd of LGBTQ+ community members in the streets of Manhattan in 1969. Credited with catalyzing a more militant and organized phase of the queer liberation movement in the United States, Stonewall was a crucial moment in the country’s wider history of struggle toward social equality. President Barack Obama designated Stonewall as a National Park Service (NPS) monument in 2016, making it the first national monument dedicated to LGBTQ+ activism. The accompanying NPS website characterized the history of the uprising as a combined effort of lesbian, gay, bisexual, transgender, and genderqueer folks (LGBTQ+) who chose to fight back against repression and assert their common pride. One of the earliest acts of the second Trump administration in 2025 was to scrub the NPS’ Stonewall website of references to transgender and genderqueer identities, and consequently from any role in the uprising itself. For example, the common term “LGBTQ” was edited to “LGB,” a phrase sometimes used by conservative groups actively seeking to decouple the struggle for trans and genderqueer rights from the wider LGBTQ+ movement. This literal erasure of trans and genderqueer history was of a piece with the Trump administration’s wider assault on those communities’ human and civil rights, for example denying them gender-affirming medical care or the protection of anti-discrimination laws. By manipulating the memory of collective resistance at Stonewall, the administration was also engaging in a divide-and-conquer strategy targeting the wider LGBTQ+ solidarity that has underpinned the queer liberation movement and provided much of its organizational and moral strength.",
+    body: "Stonewall National Monument commemorates the spontaneous six-day uprising against police harassment and social discrimination by a diverse crowd of LGBTQ+ community members in the streets of Manhattan in 1969. Credited with catalyzing a more militant and organized phase of the queer liberation movement in the United States, Stonewall was a crucial moment in the country’s wider history of struggle toward social equality. President Barack Obama designated Stonewall as a National Park Service (NPS) monument in 2016, making it the first national monument dedicated to LGBTQ+ activism. The accompanying NPS website characterized the history of the uprising as a combined effort of lesbian, gay, bisexual, transgender, and genderqueer folks (LGBTQ+) who chose to fight back against repression and assert their common pride. One of the earliest acts of the second Trump administration in 2025 was to scrub the NPS’ Stonewall website of references to transgender and genderqueer identities, and consequently from any role in the uprising itself. For example, the common term “LGBTQ” was edited to “LGB,” a phrase sometimes used by conservative groups actively seeking to decouple the struggle for trans and genderqueer rights from the wider LGBTQ+ movement. This literal erasure of trans and genderqueer history was of a piece with the Trump administration’s wider assault on those communities’ human and civil rights, for example denying them gender-affirming medical care or the protection of anti-discrimination laws. By manipulating the memory of collective resistance at Stonewall, the administration was also engaging in a divide-and-conquer strategy targeting the wider LGBTQ+ solidarity that has underpinned the queer liberation movement and provided much of its organizational and moral strength. Stonewall’s contribution to the LGBTQ+ movement consisted of not just the event itself – a fairly limited and local uprising, and not even the first of its kind in U.S. history – but also its crucial symbolic value. Commemorations of Stonewall in the early 1970s evolved into the annual LGBTQ+ pride events we still celebrate today, and a number of activist groups coalesced amidst the new spirit of defiance that it epitomized. For this reason, contests over the memory of Stonewall cut to the heart of the LGBTQ+ movement’s self-conception. The movement itself has depended upon solidarity between gay, lesbian, bisexual, transgender, and other queer folks. As with any coalition, this relationship has not always been free from tension. These tensions sometimes manifest in debates over the contributions of various coalition members to the events at Stonewall, as in the now-cliched question over “who threw the first brick” during the uprising. Whether consciously or not, the Trump administration’s erasure of the trans and genderqueer presence at Stonewall plays upon these tensions and undermines the solidarity that has underpinned the LGBTQ+ movement. For these reasons, it is essential not to erase any community’s role at Stonewall, including those of trans and genderqueer people. Given the nature of the events at Stonewall as well as the differing terminology in use at the time (“transgender” not becoming commonly accepted until later), historians have sometimes found it difficult to pinpoint the names and self-identities of the individuals involved, but the above graphic is a collage of those who were most likely there and identified in a way that we would today describe as transgender or genderqueer, including (left to right): Marsha P. Johnson, Stormé DeLarverie, Miss Major Griffin-Gracy, and Sylvia Rivera.",
     contributor: "Simon Russell",
     link: "",
     student: true,
@@ -791,14 +928,32 @@ const entries = [
     imageCredit: "Collage by Simon Russell using public domain images from Wikimedia Commons"
   },
   {
-    title: "\"The Dirty Business of Slavery\"",
+    title: "\\\"The Dirty Business of Slavery\\\"",
     tags: ["Federal", "African American"],
-    body: "\"The Dirty Business of Slavery\" was an exhibit at the Independence National Historical Park that highlighted the evolution of slavery from the nation's birth through the twentieth century, focusing particularly on Philadelphia, Pennsylvania. Located in the President's House, the exhibit explored numerous topics, including the timeline of slavery, its influence on the Constitution and economy, and the changes of the slave population over time. The exhibit was removed in January 2026 under President Donald Trump's executive order titled \"Restoring Truth and Sanity to American History\", which aimed to change how United States history should be presented. With the attempt to remember the nation in a positive light, the act of removing the exhibit has led to a reduced visibility of an important part of history. Though it may be uncomfortable for some, the reality is that slavery and the founding of our nation have always been intertwined. By removing the exhibit, it prevents the people of today from understanding the contradictions underlying our foundation. After its removal, the city of Philadelphia sued the Department of the Interior in order to restore the exhibit. Cynthia Rufe, the federal judge assigned to the case, ruled in the city's favor, temporarily blocking the executive order, calling for the exhibit's restoration.",
+    body: "“The Dirty Business of Slavery” was an exhibit at the Independence National Historical Park that highlighted the evolution of slavery from the nation’s birth through the twentieth century, focusing particularly on Philadelphia, Pennsylvania. Located in the President’s House, the exhibit explored numerous topics, including the timeline of slavery, its influence on the Constitution and economy, and the changes of the slave population over time. The exhibit was removed in January 2026 under President Donald Trump’s executive order titled “Restoring Truth and Sanity to American History”, which aimed to change how United States history should be presented. With the attempt to remember the nation in a positive light, the act of removing the exhibit has led to a reduced visibility of an important part of history. Though it may be uncomfortable for some, the reality is that slavery and the founding of our nation have always been intertwined. By removing the exhibit, it prevents the people of today from understanding the contradictions underlying our foundation. After its removal, the city of Philadelphia sued the Department of the Interior in order to restore the exhibit. Cynthia Rufe, the federal judge assigned to the case, ruled in the city’s favor, temporarily blocking the executive order, calling for the exhibit’s restoration.",
     contributor: "Cristina Contreras",
-    link: "https://pen.org/purging-history-from-national-parks/",
+    link: "",
     student: true,
     image: "dirty-business.jpg",
     imageCredit: "Save Our Signs"
+  },
+  {
+    title: "Environmental Protection Agency Museum Closure",
+    tags: ["Federal"],
+    body: "Closure of Environmental Protection Agency Museum The closure of the Environmental Protection Agency Museum erases a crucial history: federal responsibility for environmental protection and public health. By forgetting this history (especially its disproportionate impact on marginalized communities) we lose a powerful argument for continued government accountability and transparency.",
+    contributor: "Anonymous",
+    link: "https://www.reuters.com/sustainability/climate-energy/us-epa-closing-its-museum-administrator-says-2025-04-01/",
+    student: false
+  },
+  {
+    title: "Environmental Protection Agency Museum Closure",
+    tags: ["Federal"],
+    body: "Closure of Environmental Protection Agency Museum The closure of the Environmental Protection Agency Museum erases a crucial history: federal responsibility for environmental protection and public health. By forgetting this history (especially its disproportionate impact on marginalized communities) we lose a powerful argument for continued government accountability and transparency.",
+    contributor: "Anonymous",
+    link: "https://www.epa.gov/newsreleases/epa-administrator-lee-zeldin-announces-closure-4m-biden-epa-museum-saving-over-600000",
+    student: false,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Seal_of_the_United_States_Environmental_Protection_Agency.svg/640px-Seal_of_the_United_States_Environmental_Protection_Agency.svg.png",
+    imageCredit: "Wikimedia Commons"
   }
 ];
 
@@ -818,8 +973,9 @@ function renderEntries(filter) {
     return;
   }
 
+  currentEntries = filtered;
   grid.innerHTML = filtered.map((e, idx) => `
-    <div class="entry-card">
+    <div class="entry-card" onclick="openModal(${idx})">
       ${e.image ? `<img class="entry-img" src="${e.image}" alt="${e.title}" loading="lazy" onerror="this.style.display='none'">` : ''}
       <div class="entry-tags">
         ${e.student ? '<span class="entry-tag student">Student Research</span>' : ''}
@@ -849,5 +1005,11 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 renderEntries('all');
 </script>
 
+
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modal-box">
+    <div id="modal-content"></div>
+  </div>
+</div>
 </body>
 </html>
