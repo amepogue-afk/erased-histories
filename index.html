@@ -266,6 +266,43 @@
     gap: 1.25rem;
   }
 
+  .entry-body-preview {
+    font-size: 0.875rem;
+    font-weight: 300;
+    line-height: 1.75;
+    color: var(--muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 10;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .entry-body-full {
+    font-size: 0.875rem;
+    font-weight: 300;
+    line-height: 1.75;
+    color: var(--muted);
+    display: none;
+  }
+
+  .entry-body-full.open { display: block; }
+
+  .read-more-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 0.4rem;
+    display: block;
+  }
+
+  .read-more-btn:hover { color: var(--green-dark); }
+
   .entry-card {
     background: white;
     border: 1px solid var(--border);
@@ -640,6 +677,22 @@
 </footer>
 
 <script>
+function toggleEntry(idx) {
+  const full = document.getElementById('full-' + idx);
+  const preview = document.getElementById('preview-' + idx);
+  const btn = document.getElementById('btn-' + idx);
+  const isOpen = full.classList.contains('open');
+  if (isOpen) {
+    full.classList.remove('open');
+    preview.style.display = '';
+    btn.textContent = 'Read more';
+  } else {
+    full.classList.add('open');
+    preview.style.display = 'none';
+    btn.textContent = 'Read less';
+  }
+}
+
 const entries = [
   {
     title: "Scourged Back",
@@ -755,7 +808,7 @@ function renderEntries(filter) {
     return;
   }
 
-  grid.innerHTML = filtered.map(e => `
+  grid.innerHTML = filtered.map((e, idx) => `
     <div class="entry-card">
       ${e.image ? `<img class="entry-img" src="${e.image}" alt="${e.title}" loading="lazy" onerror="this.style.display='none'">` : ''}
       <div class="entry-tags">
@@ -763,7 +816,9 @@ function renderEntries(filter) {
         ${(e.tags || []).map(t => `<span class="entry-tag">${t}</span>`).join('')}
       </div>
       <div class="entry-title">${e.title}</div>
-      <div class="entry-body">${e.body}</div>
+      <div class="entry-body-preview" id="preview-${idx}">${e.body}</div>
+      <div class="entry-body-full" id="full-${idx}">${e.body}</div>
+      <button class="read-more-btn" onclick="toggleEntry(${idx})" id="btn-${idx}">Read more</button>
       ${e.imageCredit ? `<div class="entry-credit">${e.imageCredit}</div>` : ''}
       <div class="entry-footer">
         <span class="entry-contributor">${e.contributor || 'Contributor'}</span>
