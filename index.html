@@ -830,6 +830,51 @@ function closeModal(event) {
 
 let currentEntries = [];
 
+const grid = document.getElementById('entries-grid');
+const countLabel = document.getElementById('count-label');
+
+function renderEntries(filter) {
+  const filtered = filter === 'all' ? entries : entries.filter(e => e.tags && e.tags.includes(filter));
+  countLabel.textContent = filtered.length === 1 ? '1 entry' : filtered.length > 0 ? filtered.length + ' entries' : '';
+  currentEntries = filtered;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div class="coming-soon">
+        <h3>No entries found</h3>
+        <p>Try a different filter or check back as more entries are added.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((e, idx) => `
+    <div class="entry-card" onclick="openModal(${idx})">
+      ${e.image ? `<img class="entry-img" src="${e.image}" alt="${e.title}" loading="lazy" onerror="this.style.display='none'">` : ''}
+      <div class="entry-tags">
+        ${e.student ? '<span class="entry-tag student">Student Research</span>' : ''}
+        ${(e.tags || []).map(t => `<span class="entry-tag">${t}</span>`).join('')}
+      </div>
+      <div class="entry-title">${e.title}</div>
+      <div class="entry-body-preview" id="preview-${idx}">${e.body}</div>
+      <div class="entry-body-full" id="full-${idx}">${e.body}</div>
+      <button class="read-more-btn" onclick="event.stopPropagation();toggleEntry(${idx})" id="btn-${idx}">Read more</button>
+      ${e.imageCredit ? `<div class="entry-credit">${e.imageCredit}</div>` : ''}
+      <div class="entry-footer">
+        <span class="entry-contributor">${e.contributor || 'Contributor'}</span>
+        ${e.link ? `<a class="entry-link" href="${e.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Source</a>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderEntries(btn.dataset.filter);
+  });
+});
+
 const entries = [
   {
     title: "Scourged Back",
@@ -857,7 +902,9 @@ const entries = [
     body: "At Muir Woods National Monument in Marin County, California, a site called Founders Grove is named to honor individuals who worked to preserve the redwood forests in the late 19th and early 20th centuries. The original sign at Founders Grove, Saving Muir Woods, chronicled key conservation milestones, positioning John Muir, Gifford Pinchot, William Kent, and Theodore Roosevelt as central figures in the forest’s preservation while omitting the histories of the Coast Miwok and Southern Pomo peoples who stewarded the land for thousands of years before European contact. In 2021, park rangers installed History Under Construction, overlaying the sign’s original timeline with sticky notes documenting the presence of Coast Miwok and Southern Pomo in present-day Marin and Sonoma Counties, the labor exploitation, disease, and genocide of California Indians across the Spanish mission and Gold Rush eras, and the 1861 Congressional removal of Coast Miwok from their ancestral lands. Signed in March 2025, Executive Order 14253: Restoring Truth and Sanity to American History ordered the removal of content at federal sites deemed to \"inappropriately disparage Americans past or living,” and Secretarial Order 3431 specifically targeted National Parks, requiring NPS to flag “non-compliant” material for subsequent removal. History Under Construction became the first confirmed physical exhibit to be removed under the order, taken down in July 2025, while the original sign, Saving Muir Woods, remains in the park today. Executive Order 14253 justifies the removal of History Under Construction and exhibits like it throughout the nation by claiming that a comprehensive, accurate interpretation of history “deepens societal divides and fosters a sense of national shame.” What truly deepens societal divides, however, is the exclusion and erasure of our shared history in all its complexity, nuance, and consequence. The Coast Miwok and Southern Pomo people stewarded the land that today encompasses Muir Woods for thousands of years, yet Native histories are particularly vulnerable to these erasures because their experiences complicate narratives that many national monuments are built to celebrate. Removing the complex histories of the Coast Miwok and Southern Pomo people does not perpetuate the “distorted narrative” the order claims; rather, it engages perspectives that challenge long-standing narratives that can narrow our collective understanding of history. Eliminating evidence of Native survivance contributes to the exclusion and erasure that History Under Construction was created to challenge, reminding the park’s visitors that Indigenous people have been here, are still here, and that their stories are inseparable from the lands we enjoy today. The History Under Construction exhibit further documented the near decimation of the Coast Miwok. By the 1880s, only 14 known individuals remained; today, all Coast Miwok people trace their ancestry back to those 14 individuals. The exhibit also noted the federal termination of the Coast Miwok under the 1958 California Rancheria Act and their restoration alongside the Southern Pomo as the Federated Indians of Graton Rancheria in 2000. Additions regarding the park’s founders highlighted the racist language John Muir employed to refer to Indigenous people in his published diary, Gifford Pinchot and Theodore Roosevelt’s staunch support for the eugenics movement, and Congressman William Kent’s anti-Asian rhetoric and policy. Removing these additions from Muir Woods National Monument reverts the way the story is told to a simple, sanitized account that erases the experiences and voices of Native people, denying park visitors a comprehensive history of the land they stand on.",
     contributor: "Jordan Hardt",
     link: "https://www.cbsnews.com/news/signs-of-the-times-removing-stories-of-americas-past-from-our-national-parks/",
-    student: true
+    student: true,
+    image: "muir-woods.jpg",
+    imageCredit: "Golden Gate NRA, Park Archives, Muir Woods Collection, GOGA 32470"
   },
   {
     title: "Saving Muir Woods: History Under Construction",
@@ -875,7 +922,9 @@ const entries = [
     body: "Civil Rights Activist and Pastor, Dr. Amos C. Brown, had loaned a bible passed from his father and a copy of “History of the Negro Race: 1618-1880\" to the National Museum of African American History and Culture in D.C. The former of the two books was used and carried by Brown during protests during the Civil Rights Movement. The latter is the first serious take on African American history from Jamestown to Reconstruction which inspired Dr. Brown to partake in social activism. Dr. Brown’s books were removed from display and planned to be mailed back to him. This happened in the Spring of 2025 during the Trump administration’s executive attacks on many historical and cultural institutions. Fortunately, due to Dr. Brown’s and the public’s outcry, the National Museum of African American History and Culture kept the books. Though not directly targeted by the federal government, the temporary removal of these specific books is startling. Brown’s Bible is an important artifact from the African American community’s struggle for Civil Rights and “History of the Negro Race: 1618-1880\" is an important milestone for black historiography. Dr. Amos C. Brown said in the NBC news article that: “...[The African American community] took a negative and turned it into a positive, and telling the story of how people achieved great things in spite of oppression, in spite of those evil things that were done to us, that’s what that museum represents.” The very book that Dr. Brown carried with him during the Civil Rights Movement was instrumental in justifying and perpetuating slavery. The Bible has been used to justify chattel slavery for centuries, painting slavery as a paternal good for enslaved African Americans, that it was fitting for the “children of Ham”. A century later after emancipation, Civil Rights Leaders such as MLK and Dr. Amos C. Brown used the Bible and Christianity to aid in their fight for Civil Rights African Americans had turned something that was forced onto them to keep them in bondage into a force of good that achieved a freer democracy. “History of the Negro Race: 1618-1880\" was written by George Washington Williams who was a free African American who would fight in the American Civil War. His attempt to create a serious historical work of African American history was empowering because he himself was African American during a time where slavery was over, but Jim Crow was becoming in trenched. Though Willams’ work was filled with outdated views; it humanized African and African Americans and was an early step to honest black historiography. Fredrick Douglass once said: “You have seen how a man was made a slave; you shall see how a slave was made a man.”",
     contributor: "Erik Maynard Jackson",
     link: "",
-    student: true
+    student: true,
+    image: "brown-book.jpg",
+    imageCredit: "History of the Negro Race in America, George Washington Williams, Smithsonian Institution"
   },
   {
     title: "Censorship and Revisionism at the Harpers Ferry Historical Site.",
@@ -942,69 +991,15 @@ const entries = [
     tags: ["Federal"],
     body: "Closure of Environmental Protection Agency Museum The closure of the Environmental Protection Agency Museum erases a crucial history: federal responsibility for environmental protection and public health. By forgetting this history (especially its disproportionate impact on marginalized communities) we lose a powerful argument for continued government accountability and transparency.",
     contributor: "Anonymous",
-    link: "https://www.reuters.com/sustainability/climate-energy/us-epa-closing-its-museum-administrator-says-2025-04-01/",
-    student: false
-  },
-  {
-    title: "Environmental Protection Agency Museum Closure",
-    tags: ["Federal"],
-    body: "Closure of Environmental Protection Agency Museum The closure of the Environmental Protection Agency Museum erases a crucial history: federal responsibility for environmental protection and public health. By forgetting this history (especially its disproportionate impact on marginalized communities) we lose a powerful argument for continued government accountability and transparency.",
-    contributor: "Anonymous",
     link: "https://www.epa.gov/newsreleases/epa-administrator-lee-zeldin-announces-closure-4m-biden-epa-museum-saving-over-600000",
     student: false,
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Seal_of_the_United_States_Environmental_Protection_Agency.svg/640px-Seal_of_the_United_States_Environmental_Protection_Agency.svg.png",
-    imageCredit: "Wikimedia Commons"
+    image: "epa-entry.jpg",
+    imageCredit: "EPA Headquarters, Ronald Reagan Building, Washington D.C."
   }
 ];
 
-const grid = document.getElementById('entries-grid');
-const countLabel = document.getElementById('count-label');
-
-function renderEntries(filter) {
-  const filtered = filter === 'all' ? entries : entries.filter(e => e.tags && e.tags.includes(filter));
-  countLabel.textContent = filtered.length === 1 ? '1 entry' : filtered.length > 0 ? filtered.length + ' entries' : '';
-
-  if (filtered.length === 0) {
-    grid.innerHTML = `
-      <div class="coming-soon">
-        <h3>Entries coming soon</h3>
-        <p>Student and faculty research will appear here as contributions are reviewed. Check back soon.</p>
-      </div>`;
-    return;
-  }
-
-  currentEntries = filtered;
-  grid.innerHTML = filtered.map((e, idx) => `
-    <div class="entry-card" onclick="openModal(${idx})">
-      ${e.image ? `<img class="entry-img" src="${e.image}" alt="${e.title}" loading="lazy" onerror="this.style.display='none'">` : ''}
-      <div class="entry-tags">
-        ${e.student ? '<span class="entry-tag student">Student Research</span>' : ''}
-        ${(e.tags || []).map(t => `<span class="entry-tag">${t}</span>`).join('')}
-      </div>
-      <div class="entry-title">${e.title}</div>
-      <div class="entry-body-preview" id="preview-${idx}">${e.body}</div>
-      <div class="entry-body-full" id="full-${idx}">${e.body}</div>
-      <button class="read-more-btn" onclick="toggleEntry(${idx})" id="btn-${idx}">Read more</button>
-      ${e.imageCredit ? `<div class="entry-credit">${e.imageCredit}</div>` : ''}
-      <div class="entry-footer">
-        <span class="entry-contributor">${e.contributor || 'Contributor'}</span>
-        ${e.link ? `<a class="entry-link" href="${e.link}" target="_blank" rel="noopener">Source</a>` : ''}
-      </div>
-    </div>
-  `).join('');
-}
-
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderEntries(btn.dataset.filter);
-  });
-});
-
 renderEntries('all');
 </script>
-
 
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
   <div class="modal-box" id="modal-box">
